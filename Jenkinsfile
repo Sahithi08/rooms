@@ -3,6 +3,7 @@ pipeline{
     environment{
         MONGO="mongodb+srv://chakrivanarasi:123@cluster0.vbhdsq1.mongodb.net/"
         JWT="eef5f9245c142460c20d70063583558d30f02e88455ee91a9e9d19bd49fb9baf49787e5bd2502529fcdb0d1fe8d287e4cc56ff53bf2bde139237656368224d83"
+        DOCKER_HUB_CRED = credentials('DockerHubCred')
     }
     stages{
         stage('Clone Git'){
@@ -33,13 +34,13 @@ pipeline{
         stage('Push Images to DockerHub') {
             steps {
 
-                withCredentials([usernamePassword(credentialsId: 'DockerHubCred', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                    sh 'docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD'
-                    sh 'docker tag frontend-image chakradhar63/frontend-image:latest'
-                    sh 'docker push chakradhar63/frontend-image:latest'
-                    sh 'docker tag backend-image chakradhar63/backend-image:latest'
-                    sh 'docker push chakradhar63/backend-image:latest'
-                }          
+                 withCredentials([usernamePassword(credentialsId: 'DockerHubCred', usernameVariable: 'DOCKER_HUB_USERNAME', passwordVariable: 'DOCKER_HUB_PASSWORD')]) {
+                    sh "docker login -u $DOCKER_HUB_USERNAME -p $DOCKER_HUB_PASSWORD"
+                    sh 'docker tag frontend-image sahithi008/frontend-image:latest'
+                    sh 'docker push sahithi008/frontend-image:latest'
+                    sh 'docker tag backend-image sahithi008/backend-image:latest'
+                    sh 'docker push sahithi008/backend-image:latest'
+                }        
             }
         }
         stage('Clean docker images'){
